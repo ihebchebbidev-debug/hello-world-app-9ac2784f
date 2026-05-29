@@ -408,7 +408,18 @@ function GuichetPage() {
         </TabsContent>
 
         <TabsContent value="dossiers" className="mt-0">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-3 items-start">
+      <div className="space-y-3">
+        {/* Top KPI row — moved from right sidebar */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-2">
+          <KpiCard title="Total Factures Topnet" value={`${fmt(summary.facture_topnet.amount)} DT`} sub={`${summary.facture_topnet.count} opération(s)`} />
+          <KpiCard title="Total Factures Telecom" value={`${fmt(summary.facture_tt.amount)} DT`} sub={`${summary.facture_tt.count} opération(s)`} />
+          <KpiCard title="Divers (Prix)" value={`${fmt(summary.divers.amount)} DT`} sub={`${summary.divers.count} opération(s)`} />
+          <KpiCard title="Total général" value={`${fmt(summary.facture_topnet.amount + summary.facture_tt.amount + summary.divers.amount)} DT`} sub={`${summary.dossierCount} dossier(s) validé(s)`} highlight />
+          <KpiCard title="SIM Activées" value={`${summary.sim.count} opération(s)`} />
+          <KpiCard title="Portabilités" value={`${summary.port.count} opération(s)`} />
+          <KpiCard title="SWP Traités" value={`${summary.swp.count} opération(s)`} />
+        </div>
+      <div className="grid grid-cols-1 gap-3 items-start">
         <Card>
           <CardContent className="p-4 space-y-3">
             {/* Action principale : un seul bouton "Nouveau" — le type d'opération est choisi dans le modal */}
@@ -587,15 +598,7 @@ function GuichetPage() {
           </CardContent>
         </Card>
 
-        {/* Right summary — one mini card per KPI, like the screenshot */}
-        <div className="space-y-2 lg:sticky lg:top-4">
-          <KpiCard title="Total Factures Topnet" value={`${fmt(summary.facture_topnet.amount)} DT`} sub={`${summary.facture_topnet.count} opération(s)`} />
-          <KpiCard title="Total Factures Telecom" value={`${fmt(summary.facture_tt.amount)} DT`} sub={`${summary.facture_tt.count} opération(s)`} />
-          <KpiCard title="Divers (Prix)" value={`${fmt(summary.divers.amount)} DT`} sub={`${summary.divers.count} opération(s)`} />
-          <KpiCard title="Total général" value={`${fmt(summary.facture_topnet.amount + summary.facture_tt.amount + summary.divers.amount)} DT`} sub={`${summary.dossierCount} dossier(s) validé(s)`} highlight />
-          <KpiCard title="SIM Activées" value={`${summary.sim.count} opération(s)`} />
-          <KpiCard title="Portabilités" value={`${summary.port.count} opération(s)`} />
-          <KpiCard title="SWP Traités" value={`${summary.swp.count} opération(s)`} />
+        {/* Right summary moved to top of page */}
         </div>
       </div>
         </TabsContent>
