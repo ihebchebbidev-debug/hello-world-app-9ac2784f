@@ -70,7 +70,7 @@ function GuichetAnalyticsPage() {
 
   const canRead = hasPermission("guichet.read_own") || hasPermission("guichet.read_all");
   const canReadAll = hasPermission("guichet.read_all")
-    || user?.role === "Administrateur" || user?.role === "Manager";
+    || user?.role === "Administrateur";
   const assignedEntity = canReadAll ? "" : (user?.guichetEntityId || "");
 
   const todayIso = new Date().toISOString().slice(0, 10);
