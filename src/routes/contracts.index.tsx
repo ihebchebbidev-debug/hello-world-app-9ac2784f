@@ -101,7 +101,7 @@ function ContractsPage() {
   // after conversions/imports). Fall back to the legacy ERP store only if the
   // query hasn't returned yet (or the API is disabled).
   const allContracts = (API_ENABLED && contractsQ.data) ? contractsQ.data : storeContracts;
-  const isAdmin = user?.role === "Administrateur" || user?.role === "Manager";
+  const isAdmin = user?.role === "Administrateur";
   const canDeleteContract = user?.role === "Administrateur" || hasPermission("contract.delete");
   const canExport = isAdmin || hasPermission("contract.export");
   const canImport = isAdmin || hasPermission("contract.import");
