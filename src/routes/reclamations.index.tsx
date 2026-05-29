@@ -113,6 +113,7 @@ function ReclamationsPage() {
   const canEdit   = hasPermission("reclamation.edit");
   const canDelete = hasPermission("reclamation.delete");
   const canImport = hasPermission("reclamation.import");
+  const canExport = hasPermission("reclamation.export");
 
   const { users } = useErp();
   const agentOptions = useMemo(
