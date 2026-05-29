@@ -94,7 +94,7 @@ function formatDuration(s: number | null): string {
 
 function AuditPage() {
   const { user, hasPermission } = useAuth();
-  const canView = !!user && (user.role === "Administrateur" || hasPermission("audit.view"));
+  const canView = !!user && (hasPermission("audit.view"));
   if (user && !canView) return <Navigate to="/" />;
 
   const [logs, setLogs] = useState<LogRow[]>([]);

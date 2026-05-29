@@ -61,8 +61,8 @@ function ReclamationDetailPage() {
   const navigate = useNavigate();
   const { user, hasPermission } = useAuth();
   const isAdmin = user?.role === "Administrateur";
-  const canEdit = isAdmin || hasPermission("reclamation.edit");
-  const canDelete = isAdmin || hasPermission("reclamation.delete");
+  const canEdit = hasPermission("reclamation.edit");
+  const canDelete = hasPermission("reclamation.delete");
 
   const [row, setRow] = useState<Reclamation | null>(null);
   const [loading, setLoading] = useState(true);

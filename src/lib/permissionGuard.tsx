@@ -78,7 +78,7 @@ export function useRequirePermission() {
     <T extends (...args: any[]) => any>(perm: string, fn: T) =>
       ((...args: Parameters<T>) => {
         if (!user) { notifyMissingPermission(perm); return; }
-        if (user.role === "Administrateur" || hasPermission(perm)) return fn(...args);
+        if (hasPermission(perm)) return fn(...args);
         notifyMissingPermission(perm);
       }) as T,
     [user, hasPermission],
@@ -98,7 +98,7 @@ export function useEnsurePermission() {
   return useCallback(
     (perm: string): boolean => {
       if (!user) { notifyMissingPermission(perm); return false; }
-      if (user.role === "Administrateur" || hasPermission(perm)) return true;
+      if (hasPermission(perm)) return true;
       notifyMissingPermission(perm);
       return false;
     },

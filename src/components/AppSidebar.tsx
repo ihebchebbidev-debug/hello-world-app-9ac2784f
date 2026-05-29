@@ -98,7 +98,6 @@ export function useNavVisibility() {
   const isAgent = isAgentRole(user?.role);
   const isGuichet = user?.role === "AgentGuichet";
   const AGENT_HIDDEN = new Set(["/reconciliation", "/objectives", "/reports"]);
-  const ADMIN_MANAGER = (r?: string | null) => r === "Administrateur" || r === "Manager";
   return (url: string) => {
     if (isGuichet) {
       if (GUICHET_ALLOWED.has(url)) return true;
@@ -110,9 +109,9 @@ export function useNavVisibility() {
     if (url === "/documentation" || url === "/configuration" || url === "/security")
       return user?.role === "Administrateur";
     if (url === "/audit")
-      return user?.role === "Administrateur" || hasPermission("audit.view");
+      return hasPermission("audit.view");
     if (url === "/reports")
-      return user?.role === "Administrateur" || hasPermission("report.view");
+      return hasPermission("report.view");
     if (HR_PRIV_ROUTES.has(url)) {
       const perm = permissionForPath(url);
       return user?.role === "Administrateur" || (!!perm && hasPermission(perm));
@@ -136,7 +135,6 @@ export function AppSidebar() {
   const isAgent = isAgentRole(user?.role);
   const isGuichet = user?.role === "AgentGuichet";
   const AGENT_HIDDEN = new Set(["/reconciliation", "/objectives", "/reports"]);
-  const ADMIN_MANAGER = (r?: string | null) => r === "Administrateur" || r === "Manager";
 
   const isVisible = (url: string) => {
     if (isGuichet) {
@@ -148,9 +146,9 @@ export function AppSidebar() {
     if (url === "/documentation" || url === "/configuration" || url === "/security")
       return user?.role === "Administrateur";
     if (url === "/audit")
-      return user?.role === "Administrateur" || hasPermission("audit.view");
+      return hasPermission("audit.view");
     if (url === "/reports")
-      return user?.role === "Administrateur" || hasPermission("report.view");
+      return hasPermission("report.view");
     if (HR_PRIV_ROUTES.has(url)) {
       const perm = permissionForPath(url);
       return user?.role === "Administrateur" || (!!perm && hasPermission(perm));

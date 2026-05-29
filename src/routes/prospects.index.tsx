@@ -99,12 +99,12 @@ function ProspectsPage() {
   const { typeId: filterTypeId } = Route.useSearch();
   const isAgent = user?.role === "Agent" || user?.role === "AgentSuivi" || user?.role === "AgentActivation" || user?.role === "AgentVente";
   const isAdmin = user?.role === "Administrateur";
-  const canDelete = user?.role === "Administrateur" || hasPermission("prospect.delete");
-  const canExport = isAdmin || hasPermission("prospect.export");
-  const canImport = isAdmin || hasPermission("prospect.import");
-  const canAdd = isAdmin || hasPermission("prospect.add");
-  const canEdit = isAdmin || hasPermission("prospect.edit");
-  const canAssign = isAdmin || hasPermission("prospect.assign");
+  const canDelete = hasPermission("prospect.delete");
+  const canExport = hasPermission("prospect.export");
+  const canImport = hasPermission("prospect.import");
+  const canAdd = hasPermission("prospect.add");
+  const canEdit = hasPermission("prospect.edit");
+  const canAssign = hasPermission("prospect.assign");
   const canChangeStatus = canEdit || hasPermission("prospect.status");
   const canChangeSource = canEdit || hasPermission("prospect.source");
   const myUsername = user?.username ?? "";

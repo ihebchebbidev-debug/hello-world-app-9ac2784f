@@ -60,11 +60,11 @@ function OpportunitiesPage() {
 
   const isAdmin = user?.role === "Administrateur";
   const isAgent = user?.role === "Agent" || user?.role === "AgentSuivi" || user?.role === "AgentActivation" || user?.role === "AgentVente";
-  const canConvert = isAdmin || hasPermission("opportunity.convert");
-  const canRevert = isAdmin || hasPermission("opportunity.revert");
-  const canDelete = isAdmin || hasPermission("opportunity.delete");
-  const canExport = isAdmin || hasPermission("opportunity.export");
-  const canEdit = isAdmin || hasPermission("opportunity.edit");
+  const canConvert = hasPermission("opportunity.convert");
+  const canRevert = hasPermission("opportunity.revert");
+  const canDelete = hasPermission("opportunity.delete");
+  const canExport = hasPermission("opportunity.export");
+  const canEdit = hasPermission("opportunity.edit");
 
   const oppQ = useQuery<{ opportunities: Opportunity[] }, Error>({
     queryKey: ["opportunities"],

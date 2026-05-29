@@ -54,7 +54,7 @@ function frDate(d: Date) { return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-
 function CalendarPage() {
   const auth = useAuth();
   const isAdmin = auth.user?.role === "Administrateur";
-  const canDeleteEvent = isAdmin || auth.hasPermission("calendar.event.delete");
+  const canDeleteEvent = auth.hasPermission("calendar.event.delete");
   const today = new Date();
   const [view, setView] = useState<ViewMode>("mois");
   const [cursor, setCursor] = useState(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
