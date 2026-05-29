@@ -58,7 +58,7 @@ function OpportunitiesPage() {
   const qc = useQueryClient();
   const { stage: filterStage } = Route.useSearch();
 
-  const isAdmin = user?.role === "Administrateur" || user?.role === "Manager";
+  const isAdmin = user?.role === "Administrateur";
   const isAgent = user?.role === "Agent" || user?.role === "AgentSuivi" || user?.role === "AgentActivation" || user?.role === "AgentVente";
   const canConvert = isAdmin || hasPermission("opportunity.convert");
   const canRevert = isAdmin || hasPermission("opportunity.revert");
