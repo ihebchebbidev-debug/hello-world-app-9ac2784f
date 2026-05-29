@@ -259,7 +259,7 @@ function ProspectDetailPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <Label className="text-xs">Statut d'appel</Label>
-                      <Select value={prospect.status} onValueChange={changeStatus}>
+                      <Select value={prospect.status} onValueChange={changeStatus} disabled={!canChangeStatus}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {STATUS_FALLBACK.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
@@ -268,7 +268,7 @@ function ProspectDetailPage() {
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-xs">Assigné à</Label>
-                      <Select value={prospect.assignedTo ?? "__none__"} onValueChange={changeAssignee}>
+                      <Select value={prospect.assignedTo ?? "__none__"} onValueChange={changeAssignee} disabled={!canAssign}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="__none__">Non attribué</SelectItem>
@@ -281,7 +281,7 @@ function ProspectDetailPage() {
                     {types.length > 0 && (
                       <div className="space-y-1.5">
                         <Label className="text-xs">Type de prospect</Label>
-                        <Select value={prospect.typeId ?? "__none__"} onValueChange={changeType}>
+                        <Select value={prospect.typeId ?? "__none__"} onValueChange={changeType} disabled={!canEdit}>
                           <SelectTrigger><SelectValue placeholder="Aucun type" /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="__none__">Aucun type</SelectItem>
@@ -297,15 +297,18 @@ function ProspectDetailPage() {
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs flex items-center gap-1.5"><MessageSquare className="h-3.5 w-3.5" />Observation 1</Label>
-                    <Textarea rows={3} value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Notes de suivi…" />
+                    <Textarea rows={3} value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Notes de suivi…" disabled={!canEdit} />
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs flex items-center gap-1.5"><MessageSquare className="h-3.5 w-3.5" />Observation 2</Label>
-                    <Textarea rows={3} value={comment2} onChange={(e) => setComment2(e.target.value)} placeholder="Notes complémentaires…" />
-                    <div className="flex justify-end">
-                      <Button size="sm" onClick={saveComments}>Enregistrer les commentaires</Button>
-                    </div>
+                    <Textarea rows={3} value={comment2} onChange={(e) => setComment2(e.target.value)} placeholder="Notes complémentaires…" disabled={!canEdit} />
+                    {canEdit && (
+                      <div className="flex justify-end">
+                        <Button size="sm" onClick={saveComments}>Enregistrer les commentaires</Button>
+                      </div>
+                    )}
                   </div>
+
                 </CardContent>
               </Card>
             </TabsContent>
