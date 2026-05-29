@@ -100,7 +100,7 @@ function GuichetPage() {
   const { users } = useErp();
   const canRead = hasPermission("guichet.read_own") || hasPermission("guichet.read_all");
   // Admin / Manager / read_all : aucun verrou de franchise — voient tout.
-  const canReadAll = user?.role === "Administrateur" || user?.role === "Manager" || hasPermission("guichet.read_all");
+  const canReadAll = user?.role === "Administrateur" || hasPermission("guichet.read_all");
   const isAdminLike = canReadAll;
   const assignedEntity = isAdminLike ? "" : (user?.guichetEntityId || "");
 
