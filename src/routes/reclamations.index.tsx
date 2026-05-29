@@ -352,18 +352,20 @@ function ReclamationsPage() {
               <RefreshCw className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`} />
               Rafraîchir
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-1" /> Exporter
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={async () => { await exportXLSX("reclamations.xlsx", relabelRows(exportRows as any, RECLAMATION_LABELS)); toast.success("Export Excel généré"); }}>
-                  <FileSpreadsheet className="h-4 w-4 mr-2" /> Excel
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {canExport && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Download className="h-4 w-4 mr-1" /> Exporter
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={async () => { await exportXLSX("reclamations.xlsx", relabelRows(exportRows as any, RECLAMATION_LABELS)); toast.success("Export Excel généré"); }}>
+                    <FileSpreadsheet className="h-4 w-4 mr-2" /> Excel
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
             {canImport && (
               <ImportDialog
                 title="Importer des réclamations"
