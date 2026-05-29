@@ -57,9 +57,7 @@ function ProspectDetailPage() {
   const { prospects, users, updateProspect } = useErp();
   const { user, hasPermission } = useAuth();
   const isAgent = user?.role === "Agent" || user?.role === "AgentSuivi" || user?.role === "AgentActivation" || user?.role === "AgentVente";
-  const canConvert =
-    user?.role === "Administrateur" ||
-    hasPermission("opportunity.convert");
+  const canConvert = hasPermission("opportunity.convert");
   // Lead change history: Admin always granted; others need the explicit `lead.history` permission.
   const canViewHistory = hasPermission("lead.history");
   const isAdmin = user?.role === "Administrateur";
