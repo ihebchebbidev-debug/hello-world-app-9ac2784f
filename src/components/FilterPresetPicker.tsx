@@ -61,7 +61,6 @@ export function FilterPresetPicker({ scope, current, onApply, onReset, filterKey
   const canManage =
     data?.canManage ??
     (user?.role === "Administrateur" ||
-      user?.role === "Manager" ||
       hasPermission?.("filter_preset.manage"));
 
   const [activeId, setActiveId] = useState<string | null>(null);

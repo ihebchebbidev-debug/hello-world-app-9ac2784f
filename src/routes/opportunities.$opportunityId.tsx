@@ -47,8 +47,8 @@ function OpportunityDetailPage() {
   const qc = useQueryClient();
   const { user, hasPermission } = useAuth();
   const isAdmin = user?.role === "Administrateur";
-  const canEdit = isAdmin || user?.role === "Manager" || hasPermission("opportunity.edit");
-  const canConvert = isAdmin || user?.role === "Manager" || user?.role === "AgentVente" || hasPermission("opportunity.convert");
+  const canEdit = isAdmin || hasPermission("opportunity.edit");
+  const canConvert = isAdmin || hasPermission("opportunity.convert");
   const canRevert = isAdmin || hasPermission("opportunity.revert");
   const canViewJourney = isAdmin || hasPermission("lead.history");
 

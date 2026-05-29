@@ -34,7 +34,7 @@ const TYPE_META: Record<LeadActionType, { label: string; icon: any; tone: string
 
 export function LeadActionsTimeline({ prospectId }: { prospectId: string }) {
   const { user, hasPermission } = useAuth();
-  const isAdmin = user?.role === "Administrateur" || user?.role === "Manager";
+  const isAdmin = user?.role === "Administrateur";
   const canEdit = isAdmin || hasPermission("prospect.edit");
   const [actions, setActions] = useState<LeadAction[]>([]);
   const [loading, setLoading] = useState(false);
