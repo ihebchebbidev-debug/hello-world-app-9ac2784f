@@ -137,7 +137,7 @@ function ContractDetailsView({ contract }: { contract: import("@/lib/types").Con
   const isAgent = user?.role === "Agent" || user?.role === "AgentSuivi" || user?.role === "AgentActivation" || user?.role === "AgentVente";
   const isAdmin = user?.role === "Administrateur";
   const canRevert = isAdmin || hasPermission("contract.revert");
-  const canEdit = isAdmin || user?.role === "Manager" || hasPermission("contract.edit") || (!isAgent && !!user);
+  const canEdit = isAdmin || hasPermission("contract.edit");
   const currency = useCurrency();
   const [reverting, setReverting] = useState<null | "opportunity" | "prospect">(null);
 
