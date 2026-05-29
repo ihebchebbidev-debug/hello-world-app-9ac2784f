@@ -44,8 +44,8 @@ const PRIO_BADGE: Record<string, string> = {
 function TasksPage() {
   const auth = useAuth();
   const isAdmin = auth.user?.role === "Administrateur";
-  const canEditTask = isAdmin || auth.hasPermission("task.edit");
-  const canDeleteTask = isAdmin || auth.hasPermission("task.delete");
+  const canEditTask = auth.hasPermission("task.edit");
+  const canDeleteTask = auth.hasPermission("task.delete");
   const { users } = useErp();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);

@@ -84,8 +84,8 @@ function UsersPage() {
   const { user: currentUser } = useAuth();
   const isAdmin = currentUser?.role === "Administrateur";
   const can = useCan();
-  const canEdit = isAdmin || can("user.edit");
-  const canDelete = isAdmin || can("user.delete");
+  const canEdit = can("user.edit");
+  const canDelete = can("user.delete");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState(ALL);
   const [statusFilter, setStatusFilter] = useState(ALL);
