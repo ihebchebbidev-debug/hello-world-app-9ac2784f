@@ -152,7 +152,9 @@ function RolesPage() {
     setSaving(true);
     try {
       await api("/roles.php", { method: "PUT", body: { role, permissions: perms } });
-      setDirty((d) => ({ ...d, [role]: false }));
+      // Re-fetch from DB so the UI reflects what was actually saved, not just
+      // what was toggled locally. This catches any silent server-side failures.
+      await loadAll();
       toast.success(`Permissions enregistrées pour ${role}`);
     } catch (e: any) {
       toast.error(e?.message ?? "Échec de l'enregistrement");
