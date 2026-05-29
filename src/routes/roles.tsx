@@ -22,6 +22,8 @@ import { api, API_ENABLED } from "@/lib/api";
 import { useErp } from "@/lib/erpStore";
 import { PERMISSION_SECTIONS, ALL_PERMISSION_KEYS } from "@/lib/permissions";
 import { confirmDialog } from "@/components/ConfirmDialogProvider";
+import { RequirePerm } from "@/components/RequirePerm";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/roles")({
   head: () => ({
@@ -30,8 +32,21 @@ export const Route = createFileRoute("/roles")({
       { name: "description", content: "Gestion fine des permissions par rôle." },
     ],
   }),
-  component: RolesPage,
+  component: GuardedRolesPage,
 });
+
+function GuardedRolesPage() {
+  const { user } = useAuth();
+  // Only Administrateurs can view/modify the role + permission matrix.
+  // RequirePerm with a never-granted key forces the Access Denied screen
+  // for everyone else (Administrateur bypasses all permission checks).
+  if (user?.role === "Administrateur") return <RolesPage />;
+  return (
+    <RequirePerm perm="__admin_only__" backTo="/" backLabel="Retour à l'accueil">
+      <RolesPage />
+    </RequirePerm>
+  );
+}
 
 const sections = PERMISSION_SECTIONS;
 const ALL_PERMS = ALL_PERMISSION_KEYS;
