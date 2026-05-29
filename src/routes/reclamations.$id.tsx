@@ -60,7 +60,7 @@ function ReclamationDetailPage() {
   const { id } = useParams({ from: "/reclamations/$id" });
   const navigate = useNavigate();
   const { user, hasPermission } = useAuth();
-  const isAdmin = user?.role === "Administrateur" || user?.role === "Manager";
+  const isAdmin = user?.role === "Administrateur";
   const canEdit = isAdmin || hasPermission("reclamation.edit");
   const canDelete = isAdmin || hasPermission("reclamation.delete");
 
