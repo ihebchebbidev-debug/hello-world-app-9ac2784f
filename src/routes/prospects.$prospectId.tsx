@@ -62,6 +62,9 @@ function ProspectDetailPage() {
   const canViewHistory = hasPermission("lead.history");
   const isAdmin = user?.role === "Administrateur";
   const canEdit = hasPermission("prospect.edit");
+  const canChangeStatus = canEdit || hasPermission("prospect.status");
+  const canChangeSource = canEdit || hasPermission("prospect.source");
+  const canAssign = canEdit || hasPermission("prospect.assign");
 
   const prospect = useMemo(() => prospects.find((p) => p.id === prospectId), [prospects, prospectId]);
   const agent = useMemo(() => users.find((u) => u.username === prospect?.assignedTo), [users, prospect]);
