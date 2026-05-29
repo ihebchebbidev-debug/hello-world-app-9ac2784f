@@ -42,6 +42,10 @@ export function RequireAuth({ children }: { children: ReactNode }) {
     const order = [
       "/",
       "/guichet",
+      "/hr/attendance",
+      "/hr/payroll",
+      "/hr/commissions",
+      "/hr/external-agents",
       "/prospects",
       "/opportunities",
       "/contracts",
@@ -67,15 +71,16 @@ export function RequireAuth({ children }: { children: ReactNode }) {
     return "/profile";
   }, [user, hasPermission]);
 
-  // We no longer silently redirect when the user lacks permission for the
-  // current route. Instead we render an explicit "access denied" screen so
-  // the user understands why the page is blocked (request from product).
-  // We still wait for permissions to hydrate before deciding.
+  // Auto-redirect any denied page to the user's first allowed page.
+  // Silently sending the user to their actual landing page is better than
+  // showing an "Accès refusé" wall — the sidebar already hides forbidden links.
   useEffect(() => {
     if (loading || !user) return;
-    if (!requiredPerm) return;
-    if (user.role !== "Administrateur" && permissionsLoading) return;
-    // no-op: rendering branch below handles the denied state
+    if (user.role === "Administrateur") return;
+    if (permissionsLoading) return;
+    if (requiredPerm && !hasPermission(requiredPerm) && firstAllowed !== path) {
+      navigate({ to: firstAllowed, replace: true } as any);
+    }
   }, [loading, permissionsLoading, user, requiredPerm, hasPermission, path, firstAllowed, navigate]);
 
   if (loading || !user) {

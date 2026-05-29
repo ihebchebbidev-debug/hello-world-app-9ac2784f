@@ -563,12 +563,12 @@ function user_has_permission(PDO $db, array $me, string $permission): bool {
     $username = (string)($me['username'] ?? '');
     $role     = (string)($me['role'] ?? '');
 
-    // Per-user deny override wins.
+    // Per-user deny override always wins — explicit admin action.
     $ov = user_overrides_for($db, $username);
     if (in_array($permission, $ov['deny'], true))  return false;
     if (in_array($permission, $ov['allow'], true)) return true;
 
-    // Temporary grants remain explicit exceptions, even if the base role is empty.
+    // Temporary grants are explicit admin exceptions.
     $g = active_grants_for($db, $username);
     if (in_array($permission, $g['permissions'], true)) return true;
     foreach ($g['roles'] as $extraRole) {
@@ -580,34 +580,18 @@ function user_has_permission(PDO $db, array $me, string $permission): bool {
         } catch (Throwable $e) {}
     }
 
-    // If the user's own role has 0 permissions, it is intentionally blocked.
-    // Do not let team membership resurrect access (e.g. RessourceHumaine in Direction).
-    if ($role !== '' && !role_has_any_permission($db, $role)) return false;
-
-    // Équipe (team) — union des rôles de l'équipe + le rôle individuel.
-    // (Auparavant l'équipe REMPLAÇAIT le rôle individuel, ce qui faisait perdre
-    //  silencieusement les permissions des utilisateurs avec un rôle assigné
-    //  mais dont l'équipe ne contenait pas ce rôle — ex. "Commercial",
-    //  "AgentGuichet". On honore désormais toujours le rôle individuel.)
-    $teamId = user_team_id($db, $username);
-    $rolesToCheck = [];
-    if ($teamId !== '') {
-        $rolesToCheck = team_role_names($db, $teamId);
+    // Only the user's own assigned role decides access.
+    // Team membership is organisational only — it must never bleed permissions
+    // from other roles in the team into this user's effective permission set.
+    if ($role === '') return false;
+    try {
+        $s = $db->prepare("SELECT enabled FROM crminternet_role_permissions
+                           WHERE role = :r AND permission = :p");
+        $s->execute([':r' => $role, ':p' => $permission]);
+        return (int)$s->fetchColumn() === 1;
+    } catch (Throwable $e) {
+        return false;
     }
-    if ($role !== '' && !in_array($role, $rolesToCheck, true)) {
-        $rolesToCheck[] = $role;
-    }
-    if ($rolesToCheck) {
-        $ph = implode(',', array_fill(0, count($rolesToCheck), '?'));
-        try {
-            $sql = "SELECT 1 FROM crminternet_role_permissions
-                    WHERE permission = ? AND enabled = 1 AND role IN ($ph) LIMIT 1";
-            $s = $db->prepare($sql);
-            $s->execute(array_merge([$permission], $rolesToCheck));
-            if ($s->fetchColumn()) return true;
-        } catch (Throwable $e) {}
-    }
-    return false;
 }
 
 /** Throws 403 if the user lacks the given permission. */
