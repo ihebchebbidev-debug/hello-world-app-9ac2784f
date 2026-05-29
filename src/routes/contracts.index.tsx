@@ -542,43 +542,47 @@ function ContractsPage() {
             <Card className="p-3 shadow-elegant bg-primary/5 border-primary/20 flex items-center justify-between gap-2 flex-wrap">
               <div className="text-sm font-medium">{selected.size} contrat(s) sélectionné(s)</div>
               <div className="flex gap-2 items-center flex-wrap">
-                <Select
-                  onValueChange={async (val) => {
-                    const ids = Array.from(selected);
-                    setBulkBusy(true);
-                    try {
-                      let ok = 0;
-                      for (const id of ids) {
-                        try { await updateContractBilling(id, val as Contract["billingStatus"]); ok++; } catch { /* ignore per-row */ }
-                      }
-                      toast.success(`${ok}/${ids.length} contrat(s) mis à jour`);
-                      setSelected(new Set());
-                      if (API_ENABLED) await refresh();
-                    } finally { setBulkBusy(false); }
-                  }}
-                >
-                  <SelectTrigger className="h-9 w-[230px]"><SelectValue placeholder="Changer le statut…" /></SelectTrigger>
-                  <SelectContent>
-                    {BILLING.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={bulkBusy}
-                  onClick={() => {
-                    const rows = relabelRows(
-                      withCustomFields(
-                        filtered.filter((c) => selected.has(c.id)),
-                        customDefs,
-                        customValuesById,
-                      ),
-                      CONTRACT_LABELS,
-                    );
-                    exportCSV("contrats-selection.csv", rows);
-                    toast.success(`${rows.length} contrat(s) exporté(s)`);
-                  }}
-                >Exporter sélection</Button>
+                {canEditContract && (
+                  <Select
+                    onValueChange={async (val) => {
+                      const ids = Array.from(selected);
+                      setBulkBusy(true);
+                      try {
+                        let ok = 0;
+                        for (const id of ids) {
+                          try { await updateContractBilling(id, val as Contract["billingStatus"]); ok++; } catch { /* ignore per-row */ }
+                        }
+                        toast.success(`${ok}/${ids.length} contrat(s) mis à jour`);
+                        setSelected(new Set());
+                        if (API_ENABLED) await refresh();
+                      } finally { setBulkBusy(false); }
+                    }}
+                  >
+                    <SelectTrigger className="h-9 w-[230px]"><SelectValue placeholder="Changer le statut…" /></SelectTrigger>
+                    <SelectContent>
+                      {BILLING.map((s: string) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                )}
+                {canExport && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={bulkBusy}
+                    onClick={() => {
+                      const rows = relabelRows(
+                        withCustomFields(
+                          filtered.filter((c) => selected.has(c.id)),
+                          customDefs,
+                          customValuesById,
+                        ),
+                        CONTRACT_LABELS,
+                      );
+                      exportCSV("contrats-selection.csv", rows);
+                      toast.success(`${rows.length} contrat(s) exporté(s)`);
+                    }}
+                  >Exporter sélection</Button>
+                )}
                 {canDeleteContract && (
                   <Button
                     variant="outline"
