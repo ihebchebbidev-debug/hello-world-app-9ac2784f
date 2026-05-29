@@ -1,0 +1,33 @@
+# Pretty URLs are optional — the frontend calls /crminternet/<endpoint>.php directly.
+# CORS headers are emitted by config.php (per-request, with Vary: Origin).
+# Do NOT set Access-Control-* here, otherwise Apache + PHP will emit duplicate
+# headers and the browser will block the response.
+
+# Make sure Authorization reaches PHP on shared hosts / CGI / FastCGI.
+SetEnvIf Authorization "(.+)" HTTP_AUTHORIZATION=$1
+SetEnvIfNoCase Authorization "(.+)" REDIRECT_HTTP_AUTHORIZATION=$1
+<IfModule mod_authz_core.c>
+    CGIPassAuth On
+</IfModule>
+
+RewriteEngine On
+RewriteCond %{HTTP:Authorization} ^(.+)$
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%1,E=REDIRECT_HTTP_AUTHORIZATION:%1]
+
+# Short health probe: /crminternet/health -> health.php
+RewriteRule ^health/?$ health.php [L]
+
+# ---------------------------------------------------------------------
+# PERF — gzip JSON responses (factor ~6 on list payloads)
+# ---------------------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE text/plain text/css text/html text/xml
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|zip|gz|br)$ no-gzip
+</IfModule>
+
+# Brotli if available (Apache 2.4.26+ with mod_brotli)
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS application/json application/javascript text/plain text/css text/html
+</IfModule>
