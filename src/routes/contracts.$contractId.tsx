@@ -326,24 +326,26 @@ function ContractDetailsView({ contract }: { contract: import("@/lib/types").Con
                 <RotateCcw className={`h-4 w-4 mr-1.5 ${reverting === "prospect" ? "animate-spin" : ""}`} />Retour lead
               </Button>
             )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1.5" />Exporter</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuLabel className="text-xs">Format</DropdownMenuLabel>
-                <DropdownMenuItem onClick={handleExportCSV}>
-                  <FileSpreadsheet className="h-4 w-4 mr-2" />Excel
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleExportJSON}>
-                  <FileJson className="h-4 w-4 mr-2" />JSON
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={printPage}>
-                  <Printer className="h-4 w-4 mr-2" />Imprimer / PDF
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {hasPermission("contract.export") && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-1.5" />Exporter</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44">
+                  <DropdownMenuLabel className="text-xs">Format</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={handleExportCSV}>
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />Excel
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleExportJSON}>
+                    <FileJson className="h-4 w-4 mr-2" />JSON
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={printPage}>
+                    <Printer className="h-4 w-4 mr-2" />Imprimer / PDF
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </>
         }
       />
