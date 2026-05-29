@@ -51,7 +51,7 @@ function monthsBetween(from: string, to: string): string[] {
 
 function AttendancePage() {
   const { user, hasPermission } = useAuth();
-  const isPriv = user?.role === "Administrateur" || hasPermission("hr.attendance.export");
+  const isPriv = hasPermission("hr.attendance.export");
   const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");

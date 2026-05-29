@@ -102,11 +102,11 @@ function ContractsPage() {
   // query hasn't returned yet (or the API is disabled).
   const allContracts = (API_ENABLED && contractsQ.data) ? contractsQ.data : storeContracts;
   const isAdmin = user?.role === "Administrateur";
-  const canDeleteContract = user?.role === "Administrateur" || hasPermission("contract.delete");
-  const canExport = isAdmin || hasPermission("contract.export");
-  const canImport = isAdmin || hasPermission("contract.import");
-  const canAddContract = isAdmin || hasPermission("contract.add");
-  const canEditContract = isAdmin || hasPermission("contract.edit");
+  const canDeleteContract = hasPermission("contract.delete");
+  const canExport = hasPermission("contract.export");
+  const canImport = hasPermission("contract.import");
+  const canAddContract = hasPermission("contract.add");
+  const canEditContract = hasPermission("contract.edit");
   const isAgent = user?.role === "Agent" || user?.role === "AgentSuivi" || user?.role === "AgentActivation" || user?.role === "AgentVente";
   const myUsername = user?.username ?? "";
   // Lecture globale : tous les rôles voient l'ensemble des contrats.

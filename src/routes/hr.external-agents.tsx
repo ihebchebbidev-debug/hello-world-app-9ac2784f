@@ -28,9 +28,9 @@ const empty: Partial<ExternalAgent> = { fullName: "", phone: "", email: "", cin:
 function ExternalAgentsPage() {
   const { user, hasPermission } = useAuth();
   const isAdmin = user?.role === "Administrateur";
-  const canAdd = isAdmin || hasPermission("hr.external_agents.add");
-  const canEditAgent = isAdmin || hasPermission("hr.external_agents.edit");
-  const canDelete = isAdmin || hasPermission("hr.external_agents.delete");
+  const canAdd = hasPermission("hr.external_agents.add");
+  const canEditAgent = hasPermission("hr.external_agents.edit");
+  const canDelete = hasPermission("hr.external_agents.delete");
   const canEdit = canAdd || canEditAgent; // controls action column visibility
   const [agents, setAgents] = useState<ExternalAgent[]>([]);
   const [open, setOpen] = useState(false);

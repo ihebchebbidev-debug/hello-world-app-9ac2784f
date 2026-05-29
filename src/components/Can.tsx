@@ -38,5 +38,5 @@ export function Can({
 export function useCan() {
   const { user, hasPermission } = useAuth();
   return (perm: string) =>
-    !!user && (user.role === "Administrateur" || hasPermission(perm));
+    !!user && (hasPermission(perm));
 }

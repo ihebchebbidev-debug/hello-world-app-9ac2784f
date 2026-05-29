@@ -42,7 +42,7 @@ export function CustomFieldsCard({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { user, hasPermission } = useAuth();
-  const canEdit = user?.role === "Administrateur" || hasPermission(entityEditPerm(entity));
+  const canEdit = hasPermission(entityEditPerm(entity));
 
 
   const [unsupported, setUnsupported] = useState(false);

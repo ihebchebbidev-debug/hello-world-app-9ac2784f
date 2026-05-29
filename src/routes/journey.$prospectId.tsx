@@ -37,7 +37,7 @@ function JourneyPage() {
   const { prospects, contracts } = useErp();
   const qc = useQueryClient();
   const canView =
-    !!user && (user.role === "Administrateur" || hasPermission("lead.history"));
+    !!user && (hasPermission("lead.history"));
   if (user && !canView) return <Navigate to="/" />;
 
   const storeProspect = useMemo(() => prospects.find((p) => p.id === prospectId), [prospects, prospectId]);

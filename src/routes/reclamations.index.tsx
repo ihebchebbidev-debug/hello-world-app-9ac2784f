@@ -109,10 +109,10 @@ function ReclamationsPage() {
   const navigate = useNavigate();
   const { user, hasPermission } = useAuth();
   const isAdmin = user?.role === "Administrateur";
-  const canAdd    = isAdmin || hasPermission("reclamation.add");
-  const canEdit   = isAdmin || hasPermission("reclamation.edit");
-  const canDelete = isAdmin || hasPermission("reclamation.delete");
-  const canImport = isAdmin || hasPermission("reclamation.import");
+  const canAdd    = hasPermission("reclamation.add");
+  const canEdit   = hasPermission("reclamation.edit");
+  const canDelete = hasPermission("reclamation.delete");
+  const canImport = hasPermission("reclamation.import");
 
   const { users } = useErp();
   const agentOptions = useMemo(

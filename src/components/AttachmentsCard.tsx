@@ -86,7 +86,7 @@ export function AttachmentsCard({
 }) {
   const { user, hasPermission } = useAuth();
   const isAdmin = user?.role === "Administrateur";
-  const canEdit = isAdmin || hasPermission(entityEditPerm(entity));
+  const canEdit = hasPermission(entityEditPerm(entity));
   const [items, setItems] = useState<Attachment[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);

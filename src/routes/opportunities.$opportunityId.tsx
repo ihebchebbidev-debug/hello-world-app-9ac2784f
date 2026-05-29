@@ -47,10 +47,10 @@ function OpportunityDetailPage() {
   const qc = useQueryClient();
   const { user, hasPermission } = useAuth();
   const isAdmin = user?.role === "Administrateur";
-  const canEdit = isAdmin || hasPermission("opportunity.edit");
-  const canConvert = isAdmin || hasPermission("opportunity.convert");
-  const canRevert = isAdmin || hasPermission("opportunity.revert");
-  const canViewJourney = isAdmin || hasPermission("lead.history");
+  const canEdit = hasPermission("opportunity.edit");
+  const canConvert = hasPermission("opportunity.convert");
+  const canRevert = hasPermission("opportunity.revert");
+  const canViewJourney = hasPermission("lead.history");
 
   const [opp, setOpp] = useState<Opportunity | null>(null);
   const [stages, setStages] = useState<PipelineStage[]>([]);

@@ -110,9 +110,9 @@ export function useNavVisibility() {
     if (url === "/documentation" || url === "/configuration" || url === "/security")
       return user?.role === "Administrateur";
     if (url === "/audit")
-      return user?.role === "Administrateur" || hasPermission("audit.view");
+      return hasPermission("audit.view");
     if (url === "/reports")
-      return user?.role === "Administrateur" || hasPermission("report.view");
+      return hasPermission("report.view");
     if (HR_PRIV_ROUTES.has(url)) {
       const perm = permissionForPath(url);
       return user?.role === "Administrateur" || (!!perm && hasPermission(perm));
@@ -148,9 +148,9 @@ export function AppSidebar() {
     if (url === "/documentation" || url === "/configuration" || url === "/security")
       return user?.role === "Administrateur";
     if (url === "/audit")
-      return user?.role === "Administrateur" || hasPermission("audit.view");
+      return hasPermission("audit.view");
     if (url === "/reports")
-      return user?.role === "Administrateur" || hasPermission("report.view");
+      return hasPermission("report.view");
     if (HR_PRIV_ROUTES.has(url)) {
       const perm = permissionForPath(url);
       return user?.role === "Administrateur" || (!!perm && hasPermission(perm));

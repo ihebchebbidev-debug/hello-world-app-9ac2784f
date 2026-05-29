@@ -77,7 +77,7 @@ export function ContractInfoCard({
 }) {
   const qc = useQueryClient();
   const { user, hasPermission } = useAuth();
-  const canEdit = user?.role === "Administrateur" || hasPermission(entityEditPerm(entity));
+  const canEdit = hasPermission(entityEditPerm(entity));
   const queryKey = ["contract-info", entity, entityId];
   const { data, isLoading, error } = useQuery({
     queryKey,

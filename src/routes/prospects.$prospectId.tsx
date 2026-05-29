@@ -61,9 +61,9 @@ function ProspectDetailPage() {
     user?.role === "Administrateur" ||
     hasPermission("opportunity.convert");
   // Lead change history: Admin always granted; others need the explicit `lead.history` permission.
-  const canViewHistory = user?.role === "Administrateur" || hasPermission("lead.history");
+  const canViewHistory = hasPermission("lead.history");
   const isAdmin = user?.role === "Administrateur";
-  const canEdit = isAdmin || hasPermission("prospect.edit");
+  const canEdit = hasPermission("prospect.edit");
 
   const prospect = useMemo(() => prospects.find((p) => p.id === prospectId), [prospects, prospectId]);
   const agent = useMemo(() => users.find((u) => u.username === prospect?.assignedTo), [users, prospect]);

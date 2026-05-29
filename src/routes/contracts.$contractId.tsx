@@ -136,8 +136,8 @@ function ContractDetailsView({ contract }: { contract: import("@/lib/types").Con
   const { user, hasPermission } = useAuth();
   const isAgent = user?.role === "Agent" || user?.role === "AgentSuivi" || user?.role === "AgentActivation" || user?.role === "AgentVente";
   const isAdmin = user?.role === "Administrateur";
-  const canRevert = isAdmin || hasPermission("contract.revert");
-  const canEdit = isAdmin || hasPermission("contract.edit");
+  const canRevert = hasPermission("contract.revert");
+  const canEdit = hasPermission("contract.edit");
   const currency = useCurrency();
   const [reverting, setReverting] = useState<null | "opportunity" | "prospect">(null);
 
@@ -358,7 +358,7 @@ function ContractDetailsView({ contract }: { contract: import("@/lib/types").Con
                 <TabsTrigger value="sources" className="gap-1.5"><User className="h-3.5 w-3.5" />Opportunité source</TabsTrigger>
               )}
               <TabsTrigger value="activity" className="gap-1.5"><Activity className="h-3.5 w-3.5" />Activité</TabsTrigger>
-              {(isAdmin || hasPermission("lead.history")) && (
+              {(hasPermission("lead.history")) && (
                 <TabsTrigger value="journey" className="gap-1.5"><History className="h-3.5 w-3.5" />Parcours complet</TabsTrigger>
               )}
               <TabsTrigger value="attachments" className="gap-1.5"><Paperclip className="h-3.5 w-3.5" />Pièces jointes</TabsTrigger>
@@ -469,7 +469,7 @@ function ContractDetailsView({ contract }: { contract: import("@/lib/types").Con
               <ActivityLogCard entries={getContractActivity(contract.id)} />
             </TabsContent>
 
-            {(isAdmin || hasPermission("lead.history")) && (
+            {(hasPermission("lead.history")) && (
               <TabsContent value="journey" className="mt-0">
                 <JourneyTimeline
                   prospectId={(contract as any).prospectId ?? contract.opportunityId ?? contract.id}

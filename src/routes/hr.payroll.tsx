@@ -30,7 +30,7 @@ function PayrollPage() {
   const { user, hasPermission } = useAuth();
   const { users } = useErp();
   const isAdmin = user?.role === "Administrateur";
-  const canEdit = isAdmin || hasPermission("hr.payroll.edit");
+  const canEdit = hasPermission("hr.payroll.edit");
   const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
   const [rows, setRows] = useState<PayrollEntry[]>([]);
   const [hours, setHours] = useState<Record<string, number>>({});
