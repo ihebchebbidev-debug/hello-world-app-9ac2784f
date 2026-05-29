@@ -403,37 +403,39 @@ function ContractDetailsView({ contract }: { contract: import("@/lib/types").Con
               </Card>
 
               {/* Actions */}
-              <Card className="shadow-elegant">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base">Actions facturation</CardTitle>
-                  <CardDescription>Changer le statut de facturation</CardDescription>
-                </CardHeader>
-                <CardContent className="grid grid-cols-1 gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Statut de facturation</Label>
-                    <Select value={contract.billingStatus} onValueChange={handleStatusChange}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {(stages.length ? stages.map((s) => s.name) : [contract.billingStatus]).map((s) => (
-                          <SelectItem key={s} value={s}>{s}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="md:col-span-2 flex flex-wrap gap-2 pt-2 border-t border-border">
-                    {stages.filter((s) => s.isWon).slice(0, 1).map((s) => (
-                      <Button key={s.id} size="sm" variant="outline" onClick={() => handleStatusChange(s.name)} className="border-success/30 text-success hover:bg-success/10">
-                        <CheckCircle2 className="h-4 w-4 mr-1.5" />{s.name}
-                      </Button>
-                    ))}
-                    {stages.filter((s) => s.isLost).slice(0, 1).map((s) => (
-                      <Button key={s.id} size="sm" variant="outline" onClick={() => handleStatusChange(s.name)} className="border-destructive/30 text-destructive hover:bg-destructive/10">
-                        <X className="h-4 w-4 mr-1.5" />{s.name}
-                      </Button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              {canEdit && (
+                <Card className="shadow-elegant">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Actions facturation</CardTitle>
+                    <CardDescription>Changer le statut de facturation</CardDescription>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-1 gap-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">Statut de facturation</Label>
+                      <Select value={contract.billingStatus} onValueChange={handleStatusChange}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {(stages.length ? stages.map((s) => s.name) : [contract.billingStatus]).map((s) => (
+                            <SelectItem key={s} value={s}>{s}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="md:col-span-2 flex flex-wrap gap-2 pt-2 border-t border-border">
+                      {stages.filter((s) => s.isWon).slice(0, 1).map((s) => (
+                        <Button key={s.id} size="sm" variant="outline" onClick={() => handleStatusChange(s.name)} className="border-success/30 text-success hover:bg-success/10">
+                          <CheckCircle2 className="h-4 w-4 mr-1.5" />{s.name}
+                        </Button>
+                      ))}
+                      {stages.filter((s) => s.isLost).slice(0, 1).map((s) => (
+                        <Button key={s.id} size="sm" variant="outline" onClick={() => handleStatusChange(s.name)} className="border-destructive/30 text-destructive hover:bg-destructive/10">
+                          <X className="h-4 w-4 mr-1.5" />{s.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Timeline */}
               <Card className="shadow-elegant">
