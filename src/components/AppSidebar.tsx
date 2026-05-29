@@ -98,7 +98,6 @@ export function useNavVisibility() {
   const isAgent = isAgentRole(user?.role);
   const isGuichet = user?.role === "AgentGuichet";
   const AGENT_HIDDEN = new Set(["/reconciliation", "/objectives", "/reports"]);
-  const ADMIN_MANAGER = (r?: string | null) => r === "Administrateur" || r === "Manager";
   return (url: string) => {
     if (isGuichet) {
       if (GUICHET_ALLOWED.has(url)) return true;
@@ -136,7 +135,6 @@ export function AppSidebar() {
   const isAgent = isAgentRole(user?.role);
   const isGuichet = user?.role === "AgentGuichet";
   const AGENT_HIDDEN = new Set(["/reconciliation", "/objectives", "/reports"]);
-  const ADMIN_MANAGER = (r?: string | null) => r === "Administrateur" || r === "Manager";
 
   const isVisible = (url: string) => {
     if (isGuichet) {
