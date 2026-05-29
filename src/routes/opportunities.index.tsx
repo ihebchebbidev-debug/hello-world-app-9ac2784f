@@ -524,38 +524,42 @@ function OpportunitiesPage() {
           <Card className="p-3 shadow-elegant bg-primary/5 border-primary/20 flex items-center justify-between gap-2 flex-wrap">
             <div className="text-sm font-medium">{selected.size} opportunité(s) sélectionnée(s)</div>
             <div className="flex gap-2 items-center flex-wrap">
-              <Select
-                onValueChange={async (val) => {
-                  const ids = Array.from(selected);
-                  setBulkBusy(true);
-                  try {
-                    let ok = 0;
-                    for (const id of ids) {
-                      try { await api("/opportunities.php", { method: "PATCH", body: { id, stage: val } }); ok++; } catch { /* ignore */ }
-                    }
-                    toast.success(`${ok}/${ids.length} étape(s) mises à jour`);
-                    setSelected(new Set()); reload();
-                  } finally { setBulkBusy(false); }
-                }}
-              >
-                <SelectTrigger className="h-9 w-[230px]" disabled={bulkBusy}><SelectValue placeholder="Changer l'étape…" /></SelectTrigger>
-                <SelectContent>
-                  {stages.map((s) => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
-                </SelectContent>
-              </Select>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={bulkBusy}
-                onClick={() => {
-                  const rows = relabelRows(
-                    withCustomFields(filtered.filter((o) => selected.has(o.id)), customDefs, customValuesById),
-                    OPPORTUNITY_LABELS,
-                  );
-                  exportCSV("opportunites-selection.csv", rows as any);
-                  toast.success(`${rows.length} opportunité(s) exportée(s)`);
-                }}
-              >Exporter sélection</Button>
+              {canEdit && (
+                <Select
+                  onValueChange={async (val) => {
+                    const ids = Array.from(selected);
+                    setBulkBusy(true);
+                    try {
+                      let ok = 0;
+                      for (const id of ids) {
+                        try { await api("/opportunities.php", { method: "PATCH", body: { id, stage: val } }); ok++; } catch { /* ignore */ }
+                      }
+                      toast.success(`${ok}/${ids.length} étape(s) mises à jour`);
+                      setSelected(new Set()); reload();
+                    } finally { setBulkBusy(false); }
+                  }}
+                >
+                  <SelectTrigger className="h-9 w-[230px]" disabled={bulkBusy}><SelectValue placeholder="Changer l'étape…" /></SelectTrigger>
+                  <SelectContent>
+                    {stages.map((s) => <SelectItem key={s.id} value={s.name}>{s.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              )}
+              {canExport && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={bulkBusy}
+                  onClick={() => {
+                    const rows = relabelRows(
+                      withCustomFields(filtered.filter((o) => selected.has(o.id)), customDefs, customValuesById),
+                      OPPORTUNITY_LABELS,
+                    );
+                    exportCSV("opportunites-selection.csv", rows as any);
+                    toast.success(`${rows.length} opportunité(s) exportée(s)`);
+                  }}
+                >Exporter sélection</Button>
+              )}
               {canDelete && (
                 <Button
                   variant="outline"
