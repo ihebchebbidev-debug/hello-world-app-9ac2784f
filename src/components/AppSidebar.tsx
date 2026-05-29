@@ -112,9 +112,11 @@ export function useNavVisibility() {
     if (url === "/audit")
       return user?.role === "Administrateur" || hasPermission("audit.view");
     if (url === "/reports")
-      return ADMIN_MANAGER(user?.role) || hasPermission("report.view");
-    if (HR_PRIV_ROUTES.has(url))
-      return user?.role === "Administrateur" || user?.role === "Manager";
+      return user?.role === "Administrateur" || hasPermission("report.view");
+    if (HR_PRIV_ROUTES.has(url)) {
+      const perm = permissionForPath(url);
+      return user?.role === "Administrateur" || (!!perm && hasPermission(perm));
+    }
     if (isAgent && AGENT_HIDDEN.has(url)) return false;
     if (PUBLIC_AUTH_ROUTES.has(url)) return true;
     const perm = permissionForPath(url);
