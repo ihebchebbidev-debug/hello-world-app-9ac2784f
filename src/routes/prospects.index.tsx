@@ -275,6 +275,7 @@ function ProspectsPage() {
       statut: "status", assigne: "assignedTo",
     };
     return prospects.filter((p) => {
+      if (p.converted || p.opportunityId) return false;
       if (q) {
         const hay = haystackById.get(p.id) ?? "";
         if (!hay.includes(q)) return false;

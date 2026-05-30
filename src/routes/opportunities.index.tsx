@@ -70,17 +70,19 @@ function OpportunitiesPage() {
     queryKey: ["opportunities"],
     queryFn: async ({ signal }: { signal?: AbortSignal }) => {
       const opportunities = await fetchAllPaginated<Opportunity>(
-        "/opportunities.php", "opportunities", { signal },
+        "/opportunities.php", "opportunities",
+        { baseQuery: { _t: Date.now() }, signal },
       );
       return { opportunities };
     },
     enabled: API_ENABLED,
+    staleTime: 0,
   });
   const stageQ = useApiQuery<{ stages: OpportunityStage[] }>(
     ["opportunity_stages"], "/opportunity_stages.php",
     { enabled: API_ENABLED, staleTime: 5 * 60_000 },
   );
-  const items: Opportunity[] = oppQ.data?.opportunities ?? [];
+  const items: Opportunity[] = (oppQ.data?.opportunities ?? []).filter(o => !o.convertedToContract);
   const stages = useMemo(
     () => [...(stageQ.data?.stages ?? [])].sort((x, y) => x.position - y.position),
     [stageQ.data],

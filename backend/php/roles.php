@@ -26,13 +26,18 @@ function ensure_mvp_roles(PDO $db): void {
 
         $defaultPerms = [
             'RessourceHumaine' => [
-                'page.profile', 'page.notifications',
+                // Core pages always needed
+                'page.dashboard', 'page.profile', 'page.notifications',
+                // HR pages
                 'page.hr.attendance', 'page.hr.payroll',
                 'page.hr.commissions', 'page.hr.external-agents',
+                // HR actions
                 'hr.attendance.clock', 'hr.attendance.export',
                 'hr.payroll.edit', 'hr.payroll.export',
                 'hr.commissions.edit', 'hr.commissions.export',
                 'hr.external_agents.add', 'hr.external_agents.edit', 'hr.external_agents.delete',
+                // Prospects read access (HR needs to consult leads)
+                'page.prospects', 'prospect.view',
             ],
             'AgentGuichet' => [
                 'page.guichet', 'page.profile',
@@ -60,12 +65,11 @@ function ensure_mvp_roles(PDO $db): void {
                 'task.add','task.edit','task.complete','calendar.event.add',
             ],
         ];
-        $chk = $db->prepare('SELECT COUNT(*) FROM crminternet_role_permissions WHERE role=:r');
+        // Always INSERT IGNORE (not only when count=0) so missing default permissions
+        // are filled in without overwriting permissions the admin has explicitly set.
         $insP = $db->prepare('INSERT IGNORE INTO crminternet_role_permissions
             (role,permission,enabled) VALUES (:r,:p,1)');
         foreach ($defaultPerms as $role => $perms) {
-            $chk->execute([':r' => $role]);
-            if ((int)$chk->fetchColumn() > 0) continue;
             foreach ($perms as $perm) {
                 $insP->execute([':r' => $role, ':p' => $perm]);
             }

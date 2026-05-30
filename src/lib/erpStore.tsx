@@ -161,48 +161,20 @@ function mergeImportedProspectRows(
   });
 }
 
-const PROSPECTS_CACHE_KEY = "erp:prospects-cache:v1";
-
-function readCachedProspects(): Prospect[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(PROSPECTS_CACHE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as Prospect[];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-function writeCachedProspects(rows: Prospect[]) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(PROSPECTS_CACHE_KEY, JSON.stringify(rows));
-  } catch {
-    // ignore storage quota issues
-  }
-}
 
 export function ErpProvider({ children }: { children: ReactNode }) {
   const auth = (() => { try { return useAuth(); } catch { return null; } })();
   const isLogged = !!auth?.user;
 
-  // API is the source of truth — but warm-start from the localStorage cache so
-  // the dashboard renders instantly while the background refresh runs (avoids
-  // a 5-10s blank screen with 30k+ leads).
-  const [prospects, setProspects] = useState<Prospect[]>(() => readCachedProspects());
+  const [prospects, setProspects] = useState<Prospect[]>([]);
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [importedUsers, setImportedUsers] = useState<AppUser[]>([]);
   const [serverUsers, setServerUsers] = useState<AppUser[] | null>(null);
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [activity, setActivity] = useState<ActivityEntry[]>([]);
-  // If we already have a cached snapshot, treat the app as hydrated so the UI
-  // renders immediately while the network refresh happens in the background.
-  const hasCache = typeof window !== "undefined" && (() => { try { return !!window.localStorage.getItem(PROSPECTS_CACHE_KEY); } catch { return false; } })();
-  const [loading, setLoading] = useState<boolean>(API_ENABLED && !hasCache);
+  const [loading, setLoading] = useState<boolean>(API_ENABLED);
   const [error, setError] = useState<string | null>(null);
-  const [hydrated, setHydrated] = useState<boolean>(!API_ENABLED || hasCache);
+  const [hydrated, setHydrated] = useState<boolean>(!API_ENABLED);
   const [roles, setRoles] = useState<RoleDef[]>([
     { name: "Administrateur", label: "Administrateur", description: "Accès complet", color: "primary", isSystem: true },
     { name: "Manager", label: "Manager", description: "Pilotage d'équipe", color: "info", isSystem: false },
@@ -248,36 +220,11 @@ export function ErpProvider({ children }: { children: ReactNode }) {
   // successive mutations therefore coalesce into a single backend hit.
   const inflightRefresh = useMemo(() => ({ p: null as Promise<void> | null }), []);
 
-  const loadRecoveryProspects = useCallback(async (): Promise<Prospect[]> => {
-    const res = await fetch("/data/prospects-recovery.json", { cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json() as { prospects?: Prospect[] };
-    return Array.isArray(data.prospects) ? data.prospects : [];
-  }, []);
-
   const loadProspectsWithFallback = useCallback(async (): Promise<Prospect[]> => {
-    try {
-      // Chunked load: pulls 2000 rows per HTTP call. Scales to 200k+ rows
-      // without OOM on either side. Falls back to legacy single-shot if the
-      // backend returns the full list on page 1 (has_more=false).
-      const live = await fetchAllPaginated<Prospect>("/prospects.php", "prospects");
-      writeCachedProspects(live);
-      return live;
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e ?? "");
-      const status = typeof e === "object" && e && "status" in e ? Number((e as { status?: number }).status ?? 0) : 0;
-      const isMemoryCrash = status >= 500 || /Allowed memory size|PHP fatal/i.test(msg);
-      if (!isMemoryCrash) throw e;
-      const cached = readCachedProspects();
-      if (cached.length > 0) return cached;
-      const recovered = await loadRecoveryProspects();
-      if (recovered.length > 0) {
-        writeCachedProspects(recovered);
-        return recovered;
-      }
-      throw e;
-    }
-  }, [loadRecoveryProspects]);
+    return fetchAllPaginated<Prospect>("/prospects.php", "prospects", {
+      baseQuery: { _t: Date.now() },
+    });
+  }, []);
 
   // Granular helpers — every mutation refetches ONLY the entity it touched
   // (was: any update triggered a full 5-endpoint refresh).
@@ -625,11 +572,7 @@ export function ErpProvider({ children }: { children: ReactNode }) {
   const importProspects = useCallback(async (rows: Partial<Prospect>[]): Promise<ImportResult> => {
     if (API_ENABLED) {
       const r = await api<ImportResult>("/prospects.php", { method: "POST", body: { rows } });
-      setProspects((prev) => {
-        const merged = mergeImportedProspectRows(prev, rows, r.ids ?? []);
-        writeCachedProspects(merged);
-        return merged;
-      });
+      setProspects((prev) => mergeImportedProspectRows(prev, rows, r.ids ?? []));
       return {
         added: r.added,
         updated: r.updated,
@@ -642,11 +585,7 @@ export function ErpProvider({ children }: { children: ReactNode }) {
     for (const row of rows) {
       if (!String(row.lastName ?? "").trim()) skipped++;
     }
-    setProspects((prev) => {
-      const merged = mergeImportedProspectRows(prev, rows);
-      writeCachedProspects(merged);
-      return merged;
-    });
+    setProspects((prev) => mergeImportedProspectRows(prev, rows));
     const nextIds = rows
       .filter((row) => String(row.lastName ?? "").trim())
       .map((row, index) => String(row.id ?? `P-IMP-${Date.now()}-${index}`));

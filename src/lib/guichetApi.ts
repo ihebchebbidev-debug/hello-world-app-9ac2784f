@@ -129,10 +129,11 @@ export async function listDossiers(query: Record<string, string | undefined> = {
   const all: GuichetDossier[] = [];
   const pageSize = query.limit ?? "5000";
   let offset = Number(query.offset ?? 0);
+  const cacheBust = String(Date.now());
 
-  for (let guard = 0; guard < 100; guard++) {
+  for (let guard = 0; guard < 2000; guard++) {
     const r = await api<{ dossiers: GuichetDossier[]; truncated?: boolean; nextOffset?: number }>("/guichet_dossiers.php", {
-      query: { ...query, limit: pageSize, offset: String(offset) },
+      query: { ...query, limit: pageSize, offset: String(offset), _t: cacheBust },
     });
     const page = r.dossiers ?? [];
     all.push(...page);

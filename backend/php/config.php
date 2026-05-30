@@ -48,22 +48,16 @@ register_shutdown_function(function () {
 });
 
 // ---------- CORS ------------------------------------------------------
-// Reflect the request origin. Only emit Allow-Credentials when we have a
-// real origin — otherwise the wildcard + credentials combo is rejected by browsers.
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if ($origin !== '') {
-    header("Access-Control-Allow-Origin: $origin");
-    header("Vary: Origin");
-    header("Access-Control-Allow-Credentials: true");
-} else {
-    header("Access-Control-Allow-Origin: *");
-}
+// Allow access from any origin
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS");
 $reqHeaders = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']
     ?? 'Content-Type, Authorization, X-Requested-With, X-Auth-Token, X-Request-ID, X-Client-Version, Cache-Control, Pragma';
 header("Access-Control-Allow-Headers: $reqHeaders");
 header("Access-Control-Max-Age: 86400");
 header("Content-Type: application/json; charset=UTF-8");
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Pragma: no-cache");
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
     http_response_code(204);

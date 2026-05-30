@@ -1,23 +1,12 @@
-// Lovable hosting uses the standard Lovable TanStack config.
-// Vercel needs a Nitro/Vercel server output instead of the Cloudflare build target.
+import { defineConfig, type Plugin } from "vite";
+import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
-import { defineConfig as defineLovableConfig } from "@lovable.dev/vite-tanstack-config";
-import { nitro } from "nitro/vite";
+import tsConfigPaths from "vite-tsconfig-paths";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import { fileURLToPath, URL } from "node:url";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
-import { fileURLToPath, URL } from "node:url";
-import { defineConfig as defineViteConfig, type ConfigEnv, type Plugin } from "vite";
-import tsConfigPaths from "vite-tsconfig-paths";
 
-const lovableConfig = defineLovableConfig();
-
-/**
- * Génère public/version.json à chaque build.
- * Utilise le SHA du commit Vercel s'il est dispo, sinon timestamp.
- * Le client (VersionWatcher) poll ce fichier et recharge si la valeur change.
- */
 function versionStampPlugin(): Plugin {
   return {
     name: "version-stamp",
@@ -37,19 +26,35 @@ function versionStampPlugin(): Plugin {
   };
 }
 
-export default async function config(env: ConfigEnv) {
-  if (process.env.VERCEL === "1") {
-    return defineViteConfig({
-      server: { host: "::", port: 8080 },
-      resolve: {
-        alias: {
-          "@": fileURLToPath(new URL("./src", import.meta.url)),
-        },
-        dedupe: ["react", "react-dom", "react/jsx-runtime", "@tanstack/react-query", "@tanstack/query-core"],
-      },
-      plugins: [versionStampPlugin(), tailwindcss(), tsConfigPaths({ projects: ["./tsconfig.json"] }), tanstackStart(), nitro({ preset: "vercel" }), viteReact()],
-    });
-  }
-
-  return lovableConfig(env);
-}
+export default defineConfig({
+  plugins: [
+    versionStampPlugin(),
+    TanStackRouterVite({ autoCodeSplitting: true }),
+    react(),
+    tailwindcss(),
+    tsConfigPaths({ projects: ["./tsconfig.json"] }),
+  ],
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+    dedupe: [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "@tanstack/react-query",
+      "@tanstack/query-core",
+    ],
+  },
+  server: {
+    host: "::",
+    port: 8080,
+  },
+  build: {
+    outDir: "dist",
+    // Relative asset paths so the app works at any server sub-path (e.g. /crminternet/)
+    // and doesn't break when files are previewed locally.
+    assetsDir: "assets",
+  },
+  base: "./",
+});

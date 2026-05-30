@@ -42,11 +42,11 @@ function DispatchPage() {
   const canEditOutcome = auth.hasPermission("prospect.edit");
 
   const queue = useMemo(
-    () => prospects.filter((p) => p.assignedTo === null || p.assignedTo === ""),
+    () => prospects.filter((p) => !p.converted && !p.opportunityId && (p.assignedTo === null || p.assignedTo === "")),
     [prospects],
   );
   const myLeads = useMemo(
-    () => prospects.filter((p) => p.assignedTo === me && p.outcome === "pending"),
+    () => prospects.filter((p) => !p.converted && !p.opportunityId && p.assignedTo === me && p.outcome === "pending"),
     [prospects, me],
   );
   const agents = useMemo(

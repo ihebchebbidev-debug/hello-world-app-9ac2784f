@@ -116,7 +116,7 @@ if ($method === 'GET') {
         ],
         'defaultSort' => 'signatureDate',
         'defaultDir'  => 'desc',
-        'maxPerPage'  => 200,
+        'maxPerPage'  => 50000,
     ]);
 
     [$whereSql, $bind] = build_list_where($params, [
@@ -139,9 +139,6 @@ if ($method === 'GET') {
     $orderBy = build_list_order($params);
 
     if ($params['paginate']) {
-        $etagSeed = compute_list_etag($db, 'crminternet_contracts', $whereSql, $bind,
-            $params['sortKey'].'|'.$params['dir'].'|'.$params['page'].'|'.$params['perPage'].'|'.$params['fields']);
-        emit_list_etag($etagSeed);
 
         $countS = $db->prepare("SELECT COUNT(*) FROM crminternet_contracts WHERE $whereSql");
         $countS->execute($bind);

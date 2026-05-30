@@ -1,4 +1,4 @@
-import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, Link, createRootRoute } from "@tanstack/react-router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { ErpProvider } from "@/lib/erpStore";
@@ -12,8 +12,6 @@ import { VersionWatcher } from "@/components/VersionWatcher";
 import { createAppQueryClient } from "@/lib/queryClient";
 import { setForbiddenHandler } from "@/lib/api";
 import { notifyMissingPermission, inferPermissionFromUrl } from "@/lib/permissionGuard";
-
-import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
   return (
@@ -38,51 +36,9 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "CRM Internet" },
-      { name: "description", content: "CRM moderne pour la gestion des leads, contrats et équipes commerciales." },
-      { name: "author", content: "CRM Internet" },
-      // Disable browser auto-translation (Google Translate / Edge Translate /
-      // Safari Translate). When the browser swaps text nodes for translated
-      // ones, React's reconciler crashes with
-      // "Failed to execute 'removeChild' on 'Node'" — frequent for our
-      // French-speaking guichet users.
-      { name: "google", content: "notranslate" },
-      { httpEquiv: "Content-Language", content: "fr" },
-      { property: "og:title", content: "CRM Internet" },
-      { property: "og:description", content: "CRM moderne pour la gestion des leads et contrats." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
 });
-
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="fr" translate="no" className="notranslate">
-      <head>
-        <HeadContent />
-      </head>
-      <body translate="no" className="notranslate">
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
 
 function RootComponent() {
   // One QueryClient per browser session (per request on SSR — avoids leaking caches).

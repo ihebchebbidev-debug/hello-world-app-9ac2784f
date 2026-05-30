@@ -105,15 +105,12 @@ if ($method === 'GET') {
     $id = $_GET['id'] ?? null;
     // Admin/Manager peuvent voir toutes les opportunités converties via ?include_converted=1
     $includeConverted = !empty($_GET['include_converted']);
-    $convClause = $includeConverted ? '' : ' AND (converted_to_contract IS NULL OR converted_to_contract = 0)';
 
     if ($id) {
         $s = $db->prepare('SELECT * FROM crminternet_opportunities WHERE id = :id');
         $s->execute([':id' => $id]);
         $r = $s->fetch();
         if (!$r) fail('Not found', 404);
-        // Lecture globale : tous les utilisateurs authentifiés voient toutes les
-        // opportunités. Les permissions restent appliquées sur les écritures.
         ok(['opportunity' => row_to_opportunity($r)]);
     }
 
@@ -133,7 +130,7 @@ if ($method === 'GET') {
         ],
         'defaultSort' => 'createdAt',
         'defaultDir'  => 'desc',
-        'maxPerPage'  => 200,
+        'maxPerPage'  => 50000,
     ]);
 
     [$whereSql, $bind] = build_list_where($params, [
@@ -156,9 +153,6 @@ if ($method === 'GET') {
     $orderBy = build_list_order($params);
 
     if ($params['paginate']) {
-        $etagSeed = compute_list_etag($db, 'crminternet_opportunities', $whereSql, $bind,
-            $params['sortKey'].'|'.$params['dir'].'|'.$params['page'].'|'.$params['perPage'].'|'.$params['fields']);
-        emit_list_etag($etagSeed);
 
         $countS = $db->prepare("SELECT COUNT(*) FROM crminternet_opportunities WHERE $whereSql");
         $countS->execute($bind);

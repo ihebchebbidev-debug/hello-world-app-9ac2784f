@@ -21,7 +21,8 @@ import { useErp } from "@/lib/erpStore";
 import { useAuth } from "@/lib/auth";
 import { roleLabel, isAgentRole, AGENT_ROLES } from "@/lib/roleLabels";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { api, API_ENABLED } from "@/lib/api";
+import { API_ENABLED } from "@/lib/api";
+import { fetchAllPaginated } from "@/lib/paginatedFetch";
 import { Search, ArrowUpDown, IdCard, Save, RotateCcw, Check, Bookmark, Plus, Trash2, Loader2, CloudOff } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -79,12 +80,16 @@ function Dashboard() {
     [prospects, isAgent, myUsername],
   );
 
-  // Fetch opportunities for KPI counts
+  // Fetch opportunities for KPI counts — paginated so 500k+ rows work without truncation
   const [opportunities, setOpportunities] = useState<Array<{ createdAt: string; assignedTo: string | null }>>([]);
   useEffect(() => {
     if (!API_ENABLED) return;
-    api<{ opportunities: Array<{ createdAt: string; assignedTo: string | null }> }>("/opportunities.php")
-      .then((r) => setOpportunities(r.opportunities ?? []))
+    fetchAllPaginated<{ createdAt: string; assignedTo: string | null }>(
+      "/opportunities.php",
+      "opportunities",
+      { baseQuery: { _t: Date.now() } },
+    )
+      .then(setOpportunities)
       .catch(() => {});
   }, []);
 

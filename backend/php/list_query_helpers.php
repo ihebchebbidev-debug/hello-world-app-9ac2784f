@@ -34,7 +34,7 @@ if (!function_exists('parse_list_params')) {
         $sortable   = $cfg['sortable']    ?? [];
         $defaultSort= $cfg['defaultSort'] ?? array_key_first($sortable);
         $defaultDir = strtolower($cfg['defaultDir'] ?? 'desc') === 'asc' ? 'asc' : 'desc';
-        $maxPerPage = (int)($cfg['maxPerPage'] ?? 200);
+        $maxPerPage = (int)($cfg['maxPerPage'] ?? 50000);
 
         $sortKey = (string) list_param('sort', $defaultSort);
         if (!isset($sortable[$sortKey])) $sortKey = $defaultSort;

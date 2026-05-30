@@ -7,12 +7,11 @@
 import { api } from "./api";
 
 // Tuned for high-volume datasets (100k–1M+ rows).
-// 10000 rows × 12 parallel workers ≈ 120k rows in flight per round trip.
-// Most backends handle larger pages with the same fixed query overhead, so
-// fewer-but-bigger pages reduces total latency more than extra concurrency.
-export const DEFAULT_PER_PAGE = 10000;
+// 25000 rows × 12 parallel workers ≈ 300k rows in flight per round trip.
+// For 500k rows: 20 pages → 2 batches of 12. Backend maxPerPage is 50000.
+export const DEFAULT_PER_PAGE = 25000;
 export const DEFAULT_CONCURRENCY = 12;
-// Safety ceiling — 2000 pages × 10000 rows = 20M rows.
+// Safety ceiling — 2000 pages × 25000 rows = 50M rows.
 export const MAX_PAGES = 2000;
 
 export type CountResponse = { total: number };

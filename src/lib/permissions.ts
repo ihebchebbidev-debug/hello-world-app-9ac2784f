@@ -229,6 +229,7 @@ export const ALL_PERMISSION_KEYS: string[] = PERMISSION_SECTIONS.flatMap((s) =>
 export const ROUTE_PERMISSION: Record<string, string> = {
   "/": "page.dashboard",
   "/prospects": "page.prospects",
+  "/journey": "page.prospects",      // /journey/:id is a prospect detail view
   "/opportunities": "page.opportunities",
   "/contracts": "page.contracts",
   "/reclamations": "page.reclamations",
@@ -252,6 +253,7 @@ export const ROUTE_PERMISSION: Record<string, string> = {
   "/hr/commissions": "page.hr.commissions",
   "/hr/external-agents": "page.hr.external-agents",
   "/guichet": "page.guichet",
+  "/guichet_/analytics": "page.guichet",  // guichet analytics sub-page
 };
 
 // Routes always available (login flow, profile fallback, etc.)
